@@ -1,0 +1,57 @@
+﻿//Création du keyspace meteo
+
+
+CREATE KEYSPACE meteo WITH REPLICATION = { 'class' : 'SimpleStrategy', 'replication_factor' : 1 };
+
+
+//Utilisation du keyspace meteo que l'on vient de créer
+
+
+USE meteo;
+
+
+//Création d'une table meteodata qui contient les données nécessaires
+
+//Les requêtes seront faites par station, puis par date. Il est donc logique d'utiliser stationid comme clé de partition, puis date comme clustering column
+
+
+CREATE TABLE IF NOT EXISTS meteodata 
+	(
+	stationid UUID,
+
+		date timestamp,
+
+		longitude float,
+
+		latitude float,
+
+		temperature float,
+
+		humidity float,
+	
+		PRIMARY KEY(stationid, date)
+) 
+WITH CLUSTERING ORDER BY (date DESC);
+
+
+//Requête d'insertion de données
+
+
+INSERT INTO meteodata
+	    
+	(stationid, date, longitude, latitude, temperature, humidity)
+ 
+	VALUES (c3b95783-5dcf-4b5e-8ef5-3dcf4ce33917, '2018-12-05 13:30:54.234', 10.3, 39.1, 20.55, 80.4);
+
+
+//Récupération des mesures pour un identifiant de station météo donnée
+	
+
+SELECT * FROM meteodata WHERE stationid = c3b95783-5dcf-4b5e-8ef5-3dcf4ce33917;
+
+
+//Récupération des mesures pour un identifiant de station météo donnée et une plage de temps donnée
+	
+
+SELECT * FROM meteodata 
+	WHERE stationid = c3b95783-5dcf-4b5e-8ef5-3dcf4ce33917 AND date >= '2018-11-22' AND date <= '2018-12-07';

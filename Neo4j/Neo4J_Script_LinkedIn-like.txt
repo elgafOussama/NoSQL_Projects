@@ -1,0 +1,92 @@
+// Entreprises (nom, secteur d'activité, description, date de creation et taille).
+//-------------------------------------------------------------------------------------------------------------------------------------------
+
+create(e:ENTREPRISE{Nom:"NADOWEB",Secteur_activite:"E-commerce freelance",Description:"spécialisée en développement informatique au Maroc Parmi leurs prestations : conception, création et développement de sites web et solutions logiciels", DatCreation : 2010,Taille:11})
+
+create(e:ENTREPRISE{Nom:" DUWA BROSSES",Secteur_activite:"Industrie",Description:"Entreprise spécialisée dans l'étude, la conception, la fabrication et la commercialisation de goupillons, d'écouvillons tous types pour biberons, des brosses techniques industrielles sur plans. Injection intégrée des matières plastiques, écouvillons, mise sous blister, sous sachet, pinceaux pour peinture et vernis.", DatCreation : 1956,Taille:50})
+
+create(e:ENTREPRISE{Nom:"FLOREAL",Secteur_activite:"Activités des sièges sociaux ; conseil de gestion",Description:"", DatCreation : 1989,Taille:60})
+
+create(e:ENTREPRISE{Nom:"CGI FRANCE",Secteur_activite:"Conseil en systèmes et logiciels informatiques",Description:"société par actions simplifiée à associé unique est active depuis 48 ans.Domiciliée à COURBEVOIE (92400), elle est spécialisée dans le secteur d'activité du conseil en systèmes et logiciels informatiques. Son effectif est compris entre 10200 et 10299 salariés. ", DatCreation : 1970,Taille:10299})
+
+create(e:ENTREPRISE{Nom:"CODILOG",Secteur_activite:"Conseil en systèmes et logiciels informatiques",Description:"société par actions simplifiée est active depuis 18 ans. Installée à NANTERRE (92000), elle est spécialisée dans le secteur d'activité du conseil en systèmes et logiciels informatiques. Son effectif est compris entre 100 et 199 salariés. ", DatCreation : 2000,Taille:200})
+
+//-------------------------------------------------------------------------------------------------------------------------------------------
+
+//Utilisateurs (nom,prenom,description,listeCompetences)
+//-------------------------------------------------------------------------------------------------------------------------------------------
+
+create(p:UTILISATEUR{Nom:"EL GAF",Prenom:"Oussama" , Description :"Consultant SAP",listeCompetences:"SAP UI5, ABAP, Java EE, NoSQL"})
+create(p:UTILISATEUR{Nom:"De",Prenom:"Francois" , Description :"Developpeur",listeCompetences:"PHP, C, MySQL"})
+create(p:UTILISATEUR{Nom:"Coste",Prenom:"Jean" , Description :"Responsable Com",listeCompetences:""})
+create(p:UTILISATEUR{Nom:"Birouk",Prenom:"Yassine" , Description :"Developpeur",listeCompetences:"Java/JEE, Python"})
+create(p:UTILISATEUR{Nom:"Ramzi",Prenom:"Jhon" , Description :"Responsable DSI",listeCompetences:"PHP, Java"})
+create(p:UTILISATEUR{Nom:"Bond",Prenom:"James" , Description :"Consultant Technique",listeCompetences:"Dev Web"})
+create(p:UTILISATEUR{Nom:"Nacri",Prenom:"Samir" , Description :"Responsable RH",listeCompetences:""})
+create(p:UTILISATEUR{Nom:"He",Prenom:"Chen" , Description :"Stagiaire",listeCompetences:"PHP, Redis"})
+
+//-------------------------------------------------------------------------------------------------------------------------------------------
+
+
+// INDEXs
+//-------------------------------------------------------------------------------------------------------------------------------------------
+
+create index on : ENTREPRISE(Nom,Secteur_activite,Description,DatCreation,Taille)
+create index on : UTILISATEUR(Nom,Prenom,Description,listeCompetences)
+
+//-------------------------------------------------------------------------------------------------------------------------------------------
+
+
+//Relations
+//-------------------------------------------------------------------------------------------------------------------------------------------
+
+match (u:UTILISATEUR),(e:ENTREPRISE) where u.Nom="EL GAF" and e.Nom="CODILOG" create (u)-[r:WORK_AT{As:"Consultant SAP",started: 2018}]->(e)
+match (u:UTILISATEUR),(e:ENTREPRISE) where u.Nom="De" and e.Nom="NADOWEB" create (u)-[r:WORK_AT{As:"Stagiaire",started: 2017,ended:2018}]->(e)
+match (u:UTILISATEUR),(e:ENTREPRISE) where u.Nom="Birouk" and e.Nom="CGI FRANCE" create (u)-[r:WORK_AT{As:"Developpeur",started: 2016,ended:2018}]->(e)
+match (u:UTILISATEUR),(e:ENTREPRISE) where u.Nom="Birouk" and e.Nom="NADOWEB" create (u)-[r:WORK_AT{As:"Developpeur",started: 2018}]->(e)
+match (u:UTILISATEUR),(e:ENTREPRISE) where u.Nom="Ramzi" and e.Nom="CODILOG" create (u)-[r:WORK_AT{As:"Responsable SI",started: 2015,ended:2018}]->(e)
+match (u:UTILISATEUR),(e:ENTREPRISE) where u.Nom="Coste" and e.Nom="FLOREAL" create (u)-[r:WORK_AT{As:"Responsable Com",started: 2018}]->(e)
+match (u:UTILISATEUR),(e:ENTREPRISE) where u.Nom="Bond" and e.Nom=" DUWA BROSSES" create (u)-[r:WORK_AT{As:"Consultant Technique",started: 2009}]->(e)
+match (u:UTILISATEUR),(e:ENTREPRISE) where u.Nom="He" and e.Nom=" DUWA BROSSES" create (u)-[r:WORK_AT{As:"Stagiaire Technique",started: 2018}]->(e)
+match (u:UTILISATEUR),(w:UTILISATEUR) where u.Nom="EL GAF" and w.Nom="Birouk" create (u)-[r:KNOWS{since: 2016}]->(w)
+match (u:UTILISATEUR),(w:UTILISATEUR) where u.Nom="EL GAF" and w.Nom="Nacri" create (u)-[r:KNOWS{since: 2012}]->(w)
+match (u:UTILISATEUR),(w:UTILISATEUR) where u.Nom="Nacri" and w.Nom="Coste" create (u)-[r:KNOWS{since: 2015}]->(w)
+match (u:UTILISATEUR),(w:UTILISATEUR) where u.Nom="EL GAF" and w.Nom="Ramzi" create (u)-[r:KNOWS{since: 2010}]->(w)
+match (u:UTILISATEUR),(w:UTILISATEUR) where u.Nom="He" and w.Nom="De" create (u)-[r:KNOWS{since: 2017}]->(w)
+
+//-------------------------------------------------------------------------------------------------------------------------------------------
+
+//Requetes
+//-------------------------------------------------------------------------------------------------------------------------------------------
+// 1-
+// 1- 1- Recherche par nom d'Entreprise
+match(e:ENTREPRISE) where e.Nom = "CODILOG" return e
+
+// 1- 2- Recherche par nom d'Utilisateur
+match(u:UTILISATEUR) where u.Nom = "EL GAF" return u
+
+// 2- Requêtes de suggestions de relations
+// 2- 1- Utilisateurs ayant travaillé en même temps qu’un utilisateur donné dans une entreprise donnée
+
+//		-> On cherche le nom de l'entreprise et les utilisateurs qui ont travaillés avec un utilisateur donné a la fin de leurs carrières
+match(u:UTILISATEUR{Nom:"De"})-[r:WORK_AT]-(e:ENTREPRISE)-[l:WORK_AT]-(w:UTILISATEUR) where r.ended >= l.started return w.Nom,e.Nom
+
+
+//		-> On cherche les utilisateurs qui ont travaillés avec un utilisateur donné dans entreprise donnée a la fin de leurs carrières
+match(u:UTILISATEUR{Nom:"De"})-[r:WORK_AT]-(e:ENTREPRISE{Nom:"NADOWEB"})-[l:WORK_AT]-(w:UTILISATEUR) where r.ended >= l.started return w.Nom
+
+//		-> Tous les utilisateurs qui ont travaillés dans la meme entreprise donnée avec un utilisateur donne peut importe la date
+match(u:UTILISATEUR{Nom:"EL GAF"})-[r:WORK_AT]->(e:ENTREPRISE{Nom:"CODILOG"})<-[l:WORK_AT]-(w:UTILISATEUR)  return w.Nom
+
+//		-> Tous les utilisateurs qui ont travaillés dans la meme entreprise donnée avec un utilisateur donne en meme temps
+match(u:UTILISATEUR{Nom:"EL GAF"})-[r:WORK_AT]->(e:ENTREPRISE{Nom:"CODILOG"})<-[l:WORK_AT]-(w:UTILISATEUR)
+where l.started < r.started < l.ended return w.Nom
+
+// 2- 2- Utilisateurs connus par les connaissances d’un utilisateur donné
+// 		-> Utilisateurs en relation direct avec un utilisateur donné
+match(u:UTILISATEUR{Nom:"EL GAF"})-[r:KNOWS]-(w:UTILISATEUR) return w.Nom
+
+// 		-> Utilisateurs connus par les connaissances d’un utilisateur donné
+match(u:UTILISATEUR{Nom:"EL GAF"})-[r:KNOWS]-(w:UTILISATEUR)-[l:KNOWS]-(y:UTILISATEUR)  return y.Nom
+
+//-------------------------------------------------------------------------------------------------------------------------------------------
